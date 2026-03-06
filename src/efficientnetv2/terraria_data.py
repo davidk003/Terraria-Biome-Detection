@@ -16,7 +16,7 @@ def is_image_file(path):
 
 
 def get_transforms(image_size, mean, std, is_train):
-    transform_steps = [transforms.Resize(image_size)]
+    transform_steps: list = [transforms.Resize(image_size)]
     if is_train:
         transform_steps.extend(
             [
@@ -26,6 +26,45 @@ def get_transforms(image_size, mean, std, is_train):
         )
     transform_steps.extend([transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)])
     return transforms.Compose(transform_steps)
+
+
+def compute_imagefolder_mean_std(data_dir, image_size=(216, 384), batch_size=64, workers=2):
+    stats_transform = transforms.Compose(
+        [
+            transforms.Resize(image_size),
+            transforms.ToTensor(),
+        ]
+    )
+    stats_dataset = datasets.ImageFolder(
+        data_dir,
+        transform=stats_transform,
+        is_valid_file=is_image_file,
+    )
+
+    if len(stats_dataset) == 0:
+        raise ValueError(f"No image files found in: {data_dir}")
+
+    stats_loader = DataLoader(
+        stats_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=workers,
+        pin_memory=torch.cuda.is_available(),
+    )
+
+    channel_sum = torch.zeros(3, dtype=torch.float64)
+    channel_squared_sum = torch.zeros(3, dtype=torch.float64)
+    total_pixels = 0
+
+    for images, _ in stats_loader:
+        images = images.to(dtype=torch.float64)
+        channel_sum += images.sum(dim=(0, 2, 3))
+        channel_squared_sum += (images ** 2).sum(dim=(0, 2, 3))
+        total_pixels += images.size(0) * images.size(2) * images.size(3)
+
+    mean = channel_sum / total_pixels
+    std = (channel_squared_sum / total_pixels - mean ** 2).sqrt()
+    return mean.tolist(), std.tolist()
 
 
 def stratified_split_indices(targets, val_fraction=0.2, seed=42):
@@ -78,11 +117,19 @@ def get_terraria_loaders(
     split_seed=42,
     subset_fraction=1.0,
     subset_seed=42,
-    mean=IMAGENET_MEAN,
-    std=IMAGENET_STD,
+    mean=None,
+    std=None,
 ):
     if not os.path.isdir(data_dir):
         raise FileNotFoundError(f"Data directory not found: {data_dir}")
+
+    if mean is None or std is None:
+        mean, std = compute_imagefolder_mean_std(
+            data_dir,
+            image_size=image_size,
+            batch_size=max(64, batch_size),
+            workers=workers,
+        )
 
     train_transform = get_transforms(image_size, mean, std, is_train=True)
     val_transform = get_transforms(image_size, mean, std, is_train=False)
