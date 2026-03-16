@@ -9,16 +9,6 @@ from dataprep import CLASSES
 NUM_CLASSES = len(CLASSES)
 
 def get_resnet18(weights=ResNet18_Weights.DEFAULT, freeze_backbone=False):
-    """
-    Returns a ResNet-18 model adapted for Terraria biome classification.
-    
-    Args:
-        pretrained (bool): Use pretrained ImageNet weights
-        freeze_backbone (bool): Freeze all layers except the final classifier
-
-    Returns:
-        model (nn.Module)
-    """
 
     # load pretrained ResNet-18
     model = resnet18(weights=weights)

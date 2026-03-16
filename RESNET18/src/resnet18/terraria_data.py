@@ -5,7 +5,7 @@ import pandas as pd
 import cv2
 import torch
 from torch.utils.data import Dataset
-from dataprep import CLASSES  # your existing CLASSES list
+from dataprep import CLASSES  
 
 class TerrariaBiomeDataset(Dataset):
     def __init__(self, csv_path, root_dir, transform=None, crop_size=(216,384), crops_per_image=9):
