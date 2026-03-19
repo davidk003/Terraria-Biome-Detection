@@ -7,6 +7,8 @@ Done via a custom Terraria mod for collecting in-game cleaned screenshots:
 
 [Supplementary Video Demo](https://drive.google.com/file/d/1G6yc_C0iWBHlsKakjIjTHp3ytCM14XDE/view?usp=sharing)
 
+[Uploaded kaggle dataset](https://www.kaggle.com/datasets/davidkim2003/terraria-screenshots-for-biome-classification)
+
 
 
 Files
