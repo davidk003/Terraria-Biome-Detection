@@ -35,6 +35,9 @@ Files
 `src/efficientnetv2/e-netv2-terraria-pretrained.ipynb`
  - Contains the EfficientNetV2 training pipeline using pretrained weights, including dataset setup, training, evaluation, and saving the trained model.
 
+ `src/efficientnetv2/e-netv2-terraria-pretrained.ipynb`
+ - pdf version of `src/efficientnetv2/e-netv2-terraria-pretrained.ipynb` for better notebook viewing.
+
 `src/efficientnetv2/e-netv2-terraria-not-pretrained.ipynb`
  - Contains the EfficientNetV2 training pipeline without pretrained weights, including dataset setup, training, evaluation, and saving the trained model.
 
