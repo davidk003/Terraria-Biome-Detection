@@ -18,6 +18,42 @@
   </header>
 
   <main>
+    <!-- VIDEO DEMO SECTION -->
+    <section id="video-section">
+      <h2 class="section-heading">Demo Video</h2>
+      <p class="section-desc">Watch the model classify biomes in real Terraria gameplay, then run inference on it.</p>
+
+      <div class="video-embed-wrapper">
+        <iframe
+          src="https://drive.google.com/file/d/10WWZH_-g83VE8rdrb0Zh2HsdbeZWZ5Hq/preview"
+          allow="autoplay"
+          allowfullscreen
+          title="Terraria biome detection demo video"
+        ></iframe>
+      </div>
+
+      <div class="video-actions">
+        <button id="analyze-demo-btn" class="btn-primary">&#9654;&nbsp; Analyze Demo Video</button>
+        <p class="video-hint">Samples 20 frames &mdash; first run downloads the video (~30s)</p>
+      </div>
+
+      <div id="video-loading" class="hidden">
+        <div class="spinner"></div>
+        <p id="video-loading-text">Analyzing&hellip;</p>
+      </div>
+
+      <div id="video-error-box" class="hidden" role="alert">
+        <p id="video-error-text"></p>
+      </div>
+
+      <div id="video-results" class="hidden">
+        <h3 class="section-title">Frame-by-Frame Predictions</h3>
+        <div id="frame-grid"></div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
     <section id="upload-section">
       <div id="drop-zone" role="button" tabindex="0" aria-label="Drop image or click to upload">
         <div class="drop-icon">&#8679;</div>

@@ -33,6 +33,78 @@ const lowConfidenceWarn   = document.getElementById('low-confidence-warning');
 const chartContainer      = document.getElementById('probability-chart');
 const resetBtn            = document.getElementById('reset-btn');
 
+// ── Video demo ────────────────────────────────────────────────────────────────
+
+const analyzeDemoBtn  = document.getElementById('analyze-demo-btn');
+const videoLoading    = document.getElementById('video-loading');
+const videoLoadingTxt = document.getElementById('video-loading-text');
+const videoErrorBox   = document.getElementById('video-error-box');
+const videoErrorTxt   = document.getElementById('video-error-text');
+const videoResults    = document.getElementById('video-results');
+const frameGrid       = document.getElementById('frame-grid');
+
+analyzeDemoBtn.addEventListener('click', async () => {
+  analyzeDemoBtn.disabled = true;
+  videoErrorBox.classList.add('hidden');
+  videoResults.classList.add('hidden');
+  videoLoadingTxt.textContent = 'Downloading & analyzing video…';
+  videoLoading.classList.remove('hidden');
+
+  try {
+    const response = await fetch('/predict-demo');
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.detail || `Server error (${response.status})`);
+    }
+    const data = await response.json();
+    renderVideoResults(data.frames);
+  } catch (err) {
+    videoErrorTxt.textContent = err.message || 'Video analysis failed.';
+    videoErrorBox.classList.remove('hidden');
+    analyzeDemoBtn.disabled = false;
+  } finally {
+    videoLoading.classList.add('hidden');
+  }
+});
+
+function renderVideoResults(frames) {
+  frameGrid.innerHTML = '';
+
+  frames.forEach((frame, idx) => {
+    const color = BIOME_COLORS[frame.top_prediction] || '#5cb85c';
+    const pct = (frame.top_probability * 100).toFixed(1);
+
+    const card = document.createElement('div');
+    card.className = 'frame-card';
+    card.innerHTML = `
+      <div class="frame-thumb-wrap">
+        <img class="frame-thumb" src="${frame.thumbnail}" alt="Frame at ${frame.timestamp_str}" loading="lazy">
+        <span class="frame-time-badge">${frame.timestamp_str}</span>
+      </div>
+      <div class="frame-info">
+        <span class="frame-biome" style="color:${color}">${frame.top_prediction}</span>
+        <span class="frame-conf">${pct}% confidence</span>
+        <div class="frame-bar-track">
+          <div class="frame-bar-fill" style="background:${color}"></div>
+        </div>
+      </div>
+    `;
+    frameGrid.appendChild(card);
+
+    // Staggered bar animation
+    const fill = card.querySelector('.frame-bar-fill');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(() => { fill.style.width = `${pct}%`; }, idx * 40);
+      });
+    });
+  });
+
+  videoResults.classList.remove('hidden');
+  analyzeDemoBtn.textContent = '▶  Re-analyze';
+  analyzeDemoBtn.disabled = false;
+}
+
 // ── Drag & drop ───────────────────────────────────────────────────────────────
 
 dropZone.addEventListener('dragover', (e) => {
