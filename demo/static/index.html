@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terraria Biome Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="hero">
+    <h1 class="hero-title">Terraria Biome Detector</h1>
+    <p class="hero-subtitle">EfficientNetV2-S &middot; 13 biomes &middot; transfer learning</p>
+    <p class="hero-desc">Upload a Terraria screenshot and the CNN will classify the biome.</p>
+    <a href="https://github.com/davidk003/Terraria-Biome-Detection" class="github-link" target="_blank" rel="noopener">
+      View on GitHub
+    </a>
+  </header>
+
+  <main>
+    <section id="upload-section">
+      <div id="drop-zone" role="button" tabindex="0" aria-label="Drop image or click to upload">
+        <div class="drop-icon">&#8679;</div>
+        <p class="drop-label">Drag &amp; drop a screenshot here</p>
+        <p class="drop-sub">or click to browse &mdash; JPEG, PNG, WebP</p>
+        <input type="file" id="file-input" accept="image/*" hidden>
+      </div>
+    </section>
+
+    <div id="loading-overlay" class="hidden" aria-live="polite">
+      <div class="spinner"></div>
+      <p>Analyzing&hellip;</p>
+    </div>
+
+    <div id="error-box" class="hidden" role="alert">
+      <p id="error-text"></p>
+    </div>
+
+    <section id="results-section" class="hidden">
+      <div id="preview-container">
+        <img id="preview-img" alt="Uploaded Terraria screenshot">
+      </div>
+
+      <div id="top-prediction-card">
+        <span class="card-label">Detected Biome</span>
+        <span id="top-biome-name">&mdash;</span>
+        <div class="confidence-row">
+          <div id="top-confidence-track">
+            <div id="top-confidence-bar"></div>
+          </div>
+          <span id="top-probability-text">&mdash;</span>
+        </div>
+        <p id="low-confidence-warning" class="hidden">
+          Low confidence &mdash; this may not be a Terraria screenshot.
+        </p>
+      </div>
+
+      <div id="chart-section">
+        <h2 class="section-title">All Biome Probabilities</h2>
+        <div id="probability-chart"></div>
+      </div>
+
+      <button id="reset-btn">Try Another Image</button>
+    </section>
+  </main>
+
+  <footer>
+    <div class="model-info">
+      <h3>About the Model</h3>
+      <ul>
+        <li>Architecture: EfficientNetV2-S (ImageNet pretrained, fine-tuned)</li>
+        <li>Input: 216&times;384 px (16:9 aspect ratio)</li>
+        <li>Classes: 13 Terraria biomes</li>
+        <li>Inference: ONNX Runtime (CPU)</li>
+        <li>Dataset: <a href="https://www.kaggle.com/datasets/davidkim2003/terraria-screenshots-for-biome-classification" target="_blank" rel="noopener">Kaggle &rarr;</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
